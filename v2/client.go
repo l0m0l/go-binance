@@ -12,12 +12,12 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/l0m0l/go-binance/v2/common"
 	"github.com/l0m0l/go-binance/v2/delivery"
 	"github.com/l0m0l/go-binance/v2/futures"
-	"github.com/bitly/go-simplejson"
 )
 
 // SideType define side type of order
@@ -181,6 +181,7 @@ func NewClient(apiKey, secretKey string) *Client {
 		UserAgent:  "Binance/golang",
 		HTTPClient: http.DefaultClient,
 		Logger:     log.New(os.Stderr, "Binance-golang ", log.LstdFlags),
+		info:       &ClientInfo{},
 	}
 }
 
@@ -196,6 +197,14 @@ func NewDeliveryClient(apiKey, secretKey string) *delivery.Client {
 
 type doFunc func(req *http.Request) (*http.Response, error)
 
+type ClientInfo struct {
+	usedWeight   int64
+	orderCount1s int64
+	orderCount1m int64
+	orderCount1h int64
+	orderCount1d int64
+}
+
 // Client define API client
 type Client struct {
 	APIKey     string
@@ -206,7 +215,15 @@ type Client struct {
 	Debug      bool
 	Logger     *log.Logger
 	TimeOffset int64
+	info       *ClientInfo
 	do         doFunc
+}
+
+func (c *Client) usedWeight() int64 {
+	return c.info.usedWeight
+}
+func (c *Client) orderCount() int64 {
+	return c.info.orderCount1m
 }
 
 func (c *Client) debug(format string, v ...interface{}) {
@@ -308,6 +325,12 @@ func (c *Client) callAPI(ctx context.Context, r *request, opts ...RequestOption)
 	c.debug("response: %#v", res)
 	c.debug("response body: %s", string(data))
 	c.debug("response status code: %d", res.StatusCode)
+
+	c.info.usedWeight, _ = strconv.ParseInt(res.Header.Get("x-mbx-used-weight-1m"), 10, 64)
+	c.info.orderCount1s, _ = strconv.ParseInt(res.Header.Get("x-mbx-order-count-1s"), 10, 64)
+	c.info.orderCount1m, _ = strconv.ParseInt(res.Header.Get("x-mbx-order-count-1m"), 10, 64)
+	c.info.orderCount1h, _ = strconv.ParseInt(res.Header.Get("x-mbx-order-count-1h"), 10, 64)
+	c.info.orderCount1d, _ = strconv.ParseInt(res.Header.Get("x-mbx-order-count-1d"), 10, 64)
 
 	if res.StatusCode >= 400 {
 		apiErr := new(common.APIError)
