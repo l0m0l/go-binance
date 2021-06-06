@@ -236,10 +236,10 @@ type Client struct {
 	do         doFunc
 }
 
-func (c *Client) usedWeight() int64 {
+func (c *Client) UsedWeight() int64 {
 	return c.info.usedWeight
 }
-func (c *Client) orderCount() int64 {
+func (c *Client) OrderCount() int64 {
 	return c.info.orderCount1m
 }
 
