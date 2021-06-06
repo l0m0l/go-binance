@@ -49,7 +49,7 @@ type GetAccountService struct {
 func (s *GetAccountService) Do(ctx context.Context, opts ...RequestOption) (res *Account, err error) {
 	r := &request{
 		method:   "GET",
-		endpoint: "/fapi/v1/account",
+		endpoint: "/fapi/v2/account",
 		secType:  secTypeSigned,
 	}
 	data, err := s.c.callAPI(ctx, r, opts...)
@@ -80,12 +80,19 @@ type Account struct {
 	TotalPositionInitialMargin  string             `json:"totalPositionInitialMargin"`
 	TotalUnrealizedProfit       string             `json:"totalUnrealizedProfit"`
 	TotalWalletBalance          string             `json:"totalWalletBalance"`
+	TotalCrossWalletBalance     string             `json:"totalCrossWalletBalance"`
+	TotalCrossUnPnl             string             `json:"totalCrossUnPnl"`
+	AvailableBalance            string             `json:"availableBalance"`
 	UpdateTime                  int64              `json:"updateTime"`
 }
 
 // AccountAsset define account asset
 type AccountAsset struct {
 	Asset                  string `json:"asset"`
+	CrossWalletBalance     string `json:"crossWalletBalance"`
+	CrossUnPnl             string `json:"crossUnPnl"`
+	AvailableBalance       string `json:"availableBalance"`
+	MarginAvailable        bool   `json:"marginAvailable"`
 	InitialMargin          string `json:"initialMargin"`
 	MaintMargin            string `json:"maintMargin"`
 	MarginBalance          string `json:"marginBalance"`
