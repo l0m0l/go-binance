@@ -182,7 +182,6 @@ func NewClient(apiKey, secretKey string) *Client {
 		UserAgent:  "Binance/golang",
 		HTTPClient: http.DefaultClient,
 		Logger:     log.New(os.Stderr, "Binance-golang ", log.LstdFlags),
-		info:       &ClientInfo{},
 	}
 }
 
@@ -198,14 +197,6 @@ func NewDeliveryClient(apiKey, secretKey string) *delivery.Client {
 
 type doFunc func(req *http.Request) (*http.Response, error)
 
-type ClientInfo struct {
-	usedWeight   int64
-	orderCount1s int64
-	orderCount1m int64
-	orderCount1h int64
-	orderCount1d int64
-}
-
 // Client define API client
 type Client struct {
 	APIKey     string
@@ -216,15 +207,7 @@ type Client struct {
 	Debug      bool
 	Logger     *log.Logger
 	TimeOffset int64
-	info       *ClientInfo
 	do         doFunc
-}
-
-func (c *Client) usedWeight() int64 {
-	return c.info.usedWeight
-}
-func (c *Client) orderCount() int64 {
-	return c.info.orderCount1m
 }
 
 func (c *Client) debug(format string, v ...interface{}) {

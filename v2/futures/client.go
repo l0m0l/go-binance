@@ -14,8 +14,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/l0m0l/go-binance/v2/common"
 	"github.com/bitly/go-simplejson"
+	"github.com/l0m0l/go-binance/v2/common"
 )
 
 // SideType define side type of order
@@ -207,7 +207,16 @@ func NewClient(apiKey, secretKey string) *Client {
 		UserAgent:  "Binance/golang",
 		HTTPClient: http.DefaultClient,
 		Logger:     log.New(os.Stderr, "Binance-golang ", log.LstdFlags),
+		info:       &ClientInfo{},
 	}
+}
+
+type ClientInfo struct {
+	usedWeight   int64
+	orderCount1s int64
+	orderCount1m int64
+	orderCount1h int64
+	orderCount1d int64
 }
 
 type doFunc func(req *http.Request) (*http.Response, error)
@@ -222,7 +231,15 @@ type Client struct {
 	Debug      bool
 	Logger     *log.Logger
 	TimeOffset int64
+	info       *ClientInfo
 	do         doFunc
+}
+
+func (c *Client) usedWeight() int64 {
+	return c.info.usedWeight
+}
+func (c *Client) orderCount() int64 {
+	return c.info.orderCount1m
 }
 
 func (c *Client) debug(format string, v ...interface{}) {
