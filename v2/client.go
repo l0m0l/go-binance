@@ -15,6 +15,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/bitly/go-simplejson"
 	"github.com/l0m0l/go-binance/v2/common"
 	"github.com/l0m0l/go-binance/v2/delivery"
 	"github.com/l0m0l/go-binance/v2/futures"
