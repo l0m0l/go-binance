@@ -310,12 +310,6 @@ func (c *Client) callAPI(ctx context.Context, r *request, opts ...RequestOption)
 	c.debug("response body: %s", string(data))
 	c.debug("response status code: %d", res.StatusCode)
 
-	c.info.usedWeight, _ = strconv.ParseInt(res.Header.Get("x-mbx-used-weight-1m"), 10, 64)
-	c.info.orderCount1s, _ = strconv.ParseInt(res.Header.Get("x-mbx-order-count-1s"), 10, 64)
-	c.info.orderCount1m, _ = strconv.ParseInt(res.Header.Get("x-mbx-order-count-1m"), 10, 64)
-	c.info.orderCount1h, _ = strconv.ParseInt(res.Header.Get("x-mbx-order-count-1h"), 10, 64)
-	c.info.orderCount1d, _ = strconv.ParseInt(res.Header.Get("x-mbx-order-count-1d"), 10, 64)
-
 	if res.StatusCode >= 400 {
 		apiErr := new(common.APIError)
 		e := json.Unmarshal(data, apiErr)
