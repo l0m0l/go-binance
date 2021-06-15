@@ -752,6 +752,7 @@ type WsBalance struct {
 	Asset              string `json:"a"`
 	Balance            string `json:"wb"`
 	CrossWalletBalance string `json:"cw"`
+	BalanceChange      string `json:"bc"`
 }
 
 // WsPosition define position
